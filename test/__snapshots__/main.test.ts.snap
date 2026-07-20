@@ -53,16 +53,43 @@ exports[`snapshot for Stack matches previous state 1`] = `
       },
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
     },
+    "AlbHttpsListener2ADA614F": {
+      "Properties": {
+        "Certificates": [
+          {
+            "CertificateArn": {
+              "Ref": "Certificate4E7ABB08",
+            },
+          },
+        ],
+        "DefaultActions": [
+          {
+            "FixedResponseConfig": {
+              "ContentType": "text/plain",
+              "MessageBody": "Not Found",
+              "StatusCode": "404",
+            },
+            "Type": "fixed-response",
+          },
+        ],
+        "LoadBalancerArn": {
+          "Ref": "Alb16C2F182",
+        },
+        "Port": 443,
+        "Protocol": "HTTPS",
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+    },
     "AlbSecurityGroup580F65A6": {
       "Properties": {
         "GroupDescription": "Automatically created Security Group for ELB MyTestStackAlbA27FC7C7",
-        "SecurityGroupEgress": [
+        "SecurityGroupIngress": [
           {
-            "CidrIp": "255.255.255.255/32",
-            "Description": "Disallow all traffic",
-            "FromPort": 252,
-            "IpProtocol": "icmp",
-            "ToPort": 86,
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow from anyone on port 443",
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443,
           },
         ],
         "Tags": [
@@ -80,6 +107,27 @@ exports[`snapshot for Stack matches previous state 1`] = `
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
+    },
+    "AlbSecurityGrouptoMyTestStackLivekitServerLivekitServerServiceSecurityGroup0EE734587880D1B4D1EF": {
+      "Properties": {
+        "Description": "Load balancer to target",
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
+            "LivekitServerLivekitServerServiceSecurityGroup8C2CAD09",
+            "GroupId",
+          ],
+        },
+        "FromPort": 7880,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "AlbSecurityGroup580F65A6",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 7880,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
     },
     "Certificate4E7ABB08": {
       "Properties": {
@@ -129,6 +177,588 @@ exports[`snapshot for Stack matches previous state 1`] = `
       },
       "Type": "AWS::ECS::Cluster",
     },
+    "LivekitServerLivekitServerDnsRecord2A13A154": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::Join": [
+              "",
+              [
+                "dualstack.",
+                {
+                  "Fn::GetAtt": [
+                    "Alb16C2F182",
+                    "DNSName",
+                  ],
+                },
+              ],
+            ],
+          },
+          "HostedZoneId": {
+            "Fn::GetAtt": [
+              "Alb16C2F182",
+              "CanonicalHostedZoneID",
+            ],
+          },
+        },
+        "HostedZoneId": "DUMMY",
+        "Name": "livekit.dev.example.com.",
+        "Type": "A",
+      },
+      "Type": "AWS::Route53::RecordSet",
+    },
+    "LivekitServerLivekitServerListenerRule6890CD28": {
+      "Properties": {
+        "Actions": [
+          {
+            "TargetGroupArn": {
+              "Ref": "LivekitServerLivekitServerTargetGroupE3BD5D45",
+            },
+            "Type": "forward",
+          },
+        ],
+        "Conditions": [
+          {
+            "Field": "host-header",
+            "HostHeaderConfig": {
+              "Values": [
+                "livekit.dev.example.com",
+              ],
+            },
+          },
+        ],
+        "ListenerArn": {
+          "Ref": "AlbHttpsListener2ADA614F",
+        },
+        "Priority": 10,
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::ListenerRule",
+    },
+    "LivekitServerLivekitServerSecretBB774CEF": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Description": "LiveKit API key and secret",
+        "GenerateSecretString": {
+          "ExcludePunctuation": true,
+          "GenerateStringKey": "api_secret",
+          "PasswordLength": 64,
+          "SecretStringTemplate": "{"api_key":"artemis-dev-livekit"}",
+        },
+        "Name": "dev/artemis/livekit",
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::SecretsManager::Secret",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "LivekitServerLivekitServerService442AF1EF": {
+      "DependsOn": [
+        "LivekitServerLivekitServerListenerRule6890CD28",
+        "LivekitServerLivekitServerTaskDefinitionTaskRoleDefaultPolicy462C5DA5",
+        "LivekitServerLivekitServerTaskDefinitionTaskRole5A7BC154",
+      ],
+      "Properties": {
+        "Cluster": {
+          "Ref": "ClusterEB0386A7",
+        },
+        "DeploymentConfiguration": {
+          "Alarms": {
+            "AlarmNames": [],
+            "Enable": false,
+            "Rollback": false,
+          },
+          "DeploymentCircuitBreaker": {
+            "Enable": true,
+            "Rollback": true,
+          },
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 50,
+        },
+        "DeploymentController": {
+          "Type": "ECS",
+        },
+        "DesiredCount": 1,
+        "EnableECSManagedTags": false,
+        "HealthCheckGracePeriodSeconds": 120,
+        "LaunchType": "FARGATE",
+        "LoadBalancers": [
+          {
+            "ContainerName": "livekit-server",
+            "ContainerPort": 7880,
+            "TargetGroupArn": {
+              "Ref": "LivekitServerLivekitServerTargetGroupE3BD5D45",
+            },
+          },
+        ],
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "ENABLED",
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
+                  "LivekitServerLivekitServerServiceSecurityGroup8C2CAD09",
+                  "GroupId",
+                ],
+              },
+            ],
+            "Subnets": [
+              {
+                "Ref": "VpcpublicSubnet1Subnet2BB74ED7",
+              },
+              {
+                "Ref": "VpcpublicSubnet2SubnetE34B022A",
+              },
+              {
+                "Ref": "VpcpublicSubnet3SubnetDFEF064A",
+              },
+            ],
+          },
+        },
+        "ServiceName": "artemis-livekit-server",
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "TaskDefinition": {
+          "Ref": "LivekitServerLivekitServerTaskDefinition9190B00D",
+        },
+      },
+      "Type": "AWS::ECS::Service",
+    },
+    "LivekitServerLivekitServerServiceSecurityGroup8C2CAD09": {
+      "DependsOn": [
+        "LivekitServerLivekitServerTaskDefinitionTaskRoleDefaultPolicy462C5DA5",
+        "LivekitServerLivekitServerTaskDefinitionTaskRole5A7BC154",
+      ],
+      "Properties": {
+        "GroupDescription": "MyTestStack/LivekitServer/LivekitServerService/SecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "WebRTC TCP signaling",
+            "FromPort": 7881,
+            "IpProtocol": "tcp",
+            "ToPort": 7881,
+          },
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "WebRTC UDP media",
+            "FromPort": 50000,
+            "IpProtocol": "udp",
+            "ToPort": 60000,
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "VpcId": {
+          "Ref": "Vpc8378EB38",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "LivekitServerLivekitServerServiceSecurityGroupfromMyTestStackAlbSecurityGroup4C92DBCC7880BA47D671": {
+      "DependsOn": [
+        "LivekitServerLivekitServerTaskDefinitionTaskRoleDefaultPolicy462C5DA5",
+        "LivekitServerLivekitServerTaskDefinitionTaskRole5A7BC154",
+      ],
+      "Properties": {
+        "Description": "Load balancer to target",
+        "FromPort": 7880,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "LivekitServerLivekitServerServiceSecurityGroup8C2CAD09",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "AlbSecurityGroup580F65A6",
+            "GroupId",
+          ],
+        },
+        "ToPort": 7880,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "LivekitServerLivekitServerTargetGroupE3BD5D45": {
+      "Properties": {
+        "HealthCheckIntervalSeconds": 15,
+        "HealthCheckPath": "/",
+        "HealthCheckPort": "7880",
+        "HealthCheckProtocol": "HTTP",
+        "HealthCheckTimeoutSeconds": 5,
+        "HealthyThresholdCount": 2,
+        "Port": 7880,
+        "Protocol": "HTTP",
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "TargetGroupAttributes": [
+          {
+            "Key": "stickiness.enabled",
+            "Value": "false",
+          },
+        ],
+        "TargetType": "ip",
+        "UnhealthyThresholdCount": 3,
+        "VpcId": {
+          "Ref": "Vpc8378EB38",
+        },
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+    },
+    "LivekitServerLivekitServerTaskDefinition9190B00D": {
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Command": [
+              "livekit-server --keys "$LIVEKIT_API_KEY: $LIVEKIT_API_SECRET" --redis-password "$VALKEY_AUTH_TOKEN"",
+            ],
+            "EntryPoint": [
+              "/bin/sh",
+              "-c",
+            ],
+            "Environment": [
+              {
+                "Name": "LIVEKIT_CONFIG",
+                "Value": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "port: 7880
+rtc:
+  port_range_start: 50000
+  port_range_end: 60000
+  tcp_port: 7881
+  use_external_ip: true
+redis:
+  address: ",
+                      {
+                        "Fn::GetAtt": [
+                          "ValkeyValkeyReplicationGroup51EE0E56",
+                          "PrimaryEndPoint.Address",
+                        ],
+                      },
+                      ":",
+                      {
+                        "Fn::GetAtt": [
+                          "ValkeyValkeyReplicationGroup51EE0E56",
+                          "PrimaryEndPoint.Port",
+                        ],
+                      },
+                      "
+  use_tls: true",
+                    ],
+                  ],
+                },
+              },
+            ],
+            "Essential": true,
+            "HealthCheck": {
+              "Command": [
+                "CMD-SHELL",
+                "wget --spider -q http://localhost:7880/ || exit 1",
+              ],
+              "Interval": 30,
+              "Retries": 3,
+              "StartPeriod": 60,
+              "Timeout": 5,
+            },
+            "Image": Any<Object>,
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "LivekitServerLivekitServerTaskDefinitionLivekitServerLogGroup0F118A2E",
+                },
+                "awslogs-region": "us-west-1",
+                "awslogs-stream-prefix": "livekit-server",
+              },
+            },
+            "Name": "livekit-server",
+            "PortMappings": [
+              {
+                "ContainerPort": 7880,
+                "Protocol": "tcp",
+              },
+              {
+                "ContainerPort": 7881,
+                "Protocol": "tcp",
+              },
+              {
+                "ContainerPortRange": "50000-60000",
+                "Protocol": "udp",
+              },
+            ],
+            "Secrets": [
+              {
+                "Name": "LIVEKIT_API_KEY",
+                "ValueFrom": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Ref": "LivekitServerLivekitServerSecretBB774CEF",
+                      },
+                      ":api_key::",
+                    ],
+                  ],
+                },
+              },
+              {
+                "Name": "LIVEKIT_API_SECRET",
+                "ValueFrom": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Ref": "LivekitServerLivekitServerSecretBB774CEF",
+                      },
+                      ":api_secret::",
+                    ],
+                  ],
+                },
+              },
+              {
+                "Name": "VALKEY_AUTH_TOKEN",
+                "ValueFrom": {
+                  "Ref": "ValkeyValkeyAuthSecret5D61F4E5",
+                },
+              },
+            ],
+            "StopTimeout": 120,
+          },
+        ],
+        "Cpu": "1024",
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
+            "LivekitServerLivekitServerTaskDefinitionExecutionRoleDB32E3D5",
+            "Arn",
+          ],
+        },
+        "Family": "artemis-livekit-server",
+        "Memory": "2048",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": [
+          "FARGATE",
+        ],
+        "RuntimePlatform": {
+          "CpuArchitecture": "ARM64",
+          "OperatingSystemFamily": "LINUX",
+        },
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
+            "LivekitServerLivekitServerTaskDefinitionTaskRole5A7BC154",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ECS::TaskDefinition",
+    },
+    "LivekitServerLivekitServerTaskDefinitionExecutionRoleDB32E3D5": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LivekitServerLivekitServerTaskDefinitionExecutionRoleDefaultPolicyF85072EF": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "LivekitServerLivekitServerTaskDefinitionLivekitServerLogGroup0F118A2E",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "LivekitServerLivekitServerSecretBB774CEF",
+              },
+            },
+            {
+              "Action": [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "ValkeyValkeyAuthSecret5D61F4E5",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LivekitServerLivekitServerTaskDefinitionExecutionRoleDefaultPolicyF85072EF",
+        "Roles": [
+          {
+            "Ref": "LivekitServerLivekitServerTaskDefinitionExecutionRoleDB32E3D5",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LivekitServerLivekitServerTaskDefinitionLivekitServerLogGroup0F118A2E": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "RetentionInDays": 30,
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "LivekitServerLivekitServerTaskDefinitionTaskRole5A7BC154": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LivekitServerLivekitServerTaskDefinitionTaskRoleDefaultPolicy462C5DA5": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "LivekitServerLivekitServerSecretBB774CEF",
+              },
+            },
+            {
+              "Action": [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "ValkeyValkeyAuthSecret5D61F4E5",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LivekitServerLivekitServerTaskDefinitionTaskRoleDefaultPolicy462C5DA5",
+        "Roles": [
+          {
+            "Ref": "LivekitServerLivekitServerTaskDefinitionTaskRole5A7BC154",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "NlbBCDB97FE": {
       "DependsOn": [
         "VpcpublicSubnet1DefaultRouteB88F9E93",
@@ -174,6 +804,152 @@ exports[`snapshot for Stack matches previous state 1`] = `
         "Type": "network",
       },
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+    },
+    "ValkeyValkeyAuthSecret5D61F4E5": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Description": "ValKey AUTH token for LiveKit-to-ValKey connection",
+        "GenerateSecretString": {
+          "ExcludePunctuation": true,
+          "PasswordLength": 32,
+        },
+        "Name": "dev/livekit/valkey",
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::SecretsManager::Secret",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ValkeyValkeyReplicationGroup51EE0E56": {
+      "Properties": {
+        "AtRestEncryptionEnabled": true,
+        "AuthToken": {
+          "Fn::Join": [
+            "",
+            [
+              "{{resolve:secretsmanager:",
+              {
+                "Ref": "ValkeyValkeyAuthSecret5D61F4E5",
+              },
+              ":SecretString:::}}",
+            ],
+          ],
+        },
+        "AutomaticFailoverEnabled": false,
+        "CacheNodeType": "cache.t4g.micro",
+        "CacheSubnetGroupName": {
+          "Ref": "ValkeyValkeySubnetGroupF7A0AB20",
+        },
+        "Engine": "valkey",
+        "EngineVersion": "9.0",
+        "NumNodeGroups": 1,
+        "ReplicasPerNodeGroup": 0,
+        "ReplicationGroupDescription": "dev LiveKit ValKey",
+        "ReplicationGroupId": "dev-livekit-valkey",
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "ValkeyValkeySecurityGroup8EFF2370",
+              "GroupId",
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "TransitEncryptionEnabled": true,
+      },
+      "Type": "AWS::ElastiCache::ReplicationGroup",
+    },
+    "ValkeyValkeySecurityGroup8EFF2370": {
+      "Properties": {
+        "GroupDescription": "MyTestStack/Valkey/ValkeySecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "VpcId": {
+          "Ref": "Vpc8378EB38",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "ValkeyValkeySecurityGroupfromMyTestStackLivekitServerLivekitServerServiceSecurityGroup0EE734586379065EBA96": {
+      "Properties": {
+        "Description": "LiveKit to ValKey",
+        "FromPort": 6379,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "ValkeyValkeySecurityGroup8EFF2370",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "LivekitServerLivekitServerServiceSecurityGroup8C2CAD09",
+            "GroupId",
+          ],
+        },
+        "ToPort": 6379,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "ValkeyValkeySubnetGroupF7A0AB20": {
+      "Properties": {
+        "CacheSubnetGroupName": "dev-livekit-valkey",
+        "Description": "dev LiveKit ValKey subnet group",
+        "SubnetIds": [
+          {
+            "Ref": "VpcprivateSubnet1SubnetCEAD3716",
+          },
+          {
+            "Ref": "VpcprivateSubnet2Subnet2DE7549C",
+          },
+          {
+            "Ref": "VpcprivateSubnet3SubnetA5AC68D9",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::ElastiCache::SubnetGroup",
     },
     "Vpc8378EB38": {
       "Properties": {
