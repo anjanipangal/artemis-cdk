@@ -7,12 +7,13 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 
 import { devConfig } from "../src/config";
-import { ArtemisStack } from "../src/stack";
+import { AssetsStack, InfraStack } from "../src/stack";
 
 // [DEV] Test for single stack
 test("snapshot for Stack matches previous state", () => {
   const app = new cdk.App();
-  const stack = new ArtemisStack(app, "MyTestStack", devConfig);
+  const assetsStack = new AssetsStack(app, "MyTestAssetsStack", devConfig);
+  const stack = new InfraStack(app, "MyTestStack", devConfig, assetsStack);
 
   expect(stack).toMatchCdkSnapshot({
     ignoreAssets: true,
@@ -23,7 +24,8 @@ test("snapshot for Stack matches previous state", () => {
 
 test("existing subnets are not replaced (CIDR blocks unchanged)", () => {
   const app = new cdk.App();
-  const stack = new ArtemisStack(app, "MyTestStack", devConfig);
+  const assetsStack = new AssetsStack(app, "MyTestAssetsStack", devConfig);
+  const stack = new InfraStack(app, "MyTestStack", devConfig, assetsStack);
   const template = Template.fromStack(stack);
 
   const subnets = template.findResources("AWS::EC2::Subnet");
