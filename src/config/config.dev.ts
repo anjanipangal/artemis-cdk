@@ -7,4 +7,5 @@ export const devConfig: Config = {
     region: "us-west-1",
   },
   vpcCidr: "10.1.0.0/16",
+  domain: "dev.example.com",
 };

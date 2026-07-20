@@ -10,6 +10,7 @@ type Env = {
 export type Config = {
   env: Env;
   vpcCidr: string;
+  domain: string;
 };
 
 export type PipelineConfig = {

@@ -4,6 +4,7 @@ import { Stack, Tags } from "aws-cdk-lib";
 import { Vpc, SubnetType, IpAddresses } from "aws-cdk-lib/aws-ec2";
 import { Cluster, ContainerInsights } from "aws-cdk-lib/aws-ecs";
 import { ApplicationLoadBalancer, NetworkLoadBalancer } from "aws-cdk-lib/aws-elasticloadbalancingv2";
+import { HostedZone, type IHostedZone } from "aws-cdk-lib/aws-route53";
 
 import type { Config } from "../config";
 import type { AssetsStack } from "./assets";
@@ -13,6 +14,7 @@ export class InfraStack extends Stack {
   readonly cluster: Cluster;
   readonly alb: ApplicationLoadBalancer;
   readonly nlb: NetworkLoadBalancer;
+  readonly hostedZone: IHostedZone;
 
   constructor(scope: Construct, id: string, config: Config, assetsStack: AssetsStack, props?: StackProps) {
     super(scope, id, { ...props, env: config.env });
@@ -24,6 +26,13 @@ export class InfraStack extends Stack {
     this.cluster = this.createCluster();
     this.alb = this.createAlb();
     this.nlb = this.createNlb();
+    this.hostedZone = this.importHostedZone(config);
+  }
+
+  private importHostedZone(config: Config): IHostedZone {
+    return HostedZone.fromLookup(this, "HostedZone", {
+      domainName: config.domain,
+    });
   }
 
   private createAlb(): ApplicationLoadBalancer {
