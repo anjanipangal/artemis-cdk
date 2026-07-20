@@ -1,0 +1,38 @@
+name: "[CDK]: Lint and Compile"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cdk-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Node.js 24.14
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24.14.0'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - run: yarn lint
+
+      - run: yarn fmt
+
+      - run: yarn compile
+
+      - run: yarn synth
+
+      - run: yarn test
