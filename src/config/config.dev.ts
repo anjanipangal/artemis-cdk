@@ -4,7 +4,7 @@ import { AwsAccount } from "./types";
 export const devConfig: Config = {
   env: {
     account: AwsAccount.Development,
-    region: "us-east-1",
+    region: "us-west-1",
   },
-  vpcCidr: "10.0.0.0/16",
+  vpcCidr: "10.1.0.0/16",
 };
