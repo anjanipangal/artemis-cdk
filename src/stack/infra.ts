@@ -2,12 +2,14 @@ import type { Construct } from "constructs";
 import type { StackProps } from "aws-cdk-lib";
 import { Stack, Tags } from "aws-cdk-lib";
 import { Vpc, SubnetType, IpAddresses } from "aws-cdk-lib/aws-ec2";
+import { Cluster, ContainerInsights } from "aws-cdk-lib/aws-ecs";
 
 import type { Config } from "../config";
 import type { AssetsStack } from "./assets";
 
 export class InfraStack extends Stack {
   readonly vpc: Vpc;
+  readonly cluster: Cluster;
 
   constructor(scope: Construct, id: string, config: Config, assetsStack: AssetsStack, props?: StackProps) {
     super(scope, id, { ...props, env: config.env });
@@ -16,6 +18,14 @@ export class InfraStack extends Stack {
     Tags.of(this).add("GitRepository", "TBD"); //TODO Fix this once GitHub Repository gets created
 
     this.vpc = this.createVpc(config);
+    this.cluster = this.createCluster();
+  }
+
+  private createCluster(): Cluster {
+    return new Cluster(this, "Cluster", {
+      vpc: this.vpc,
+      containerInsightsV2: ContainerInsights.DISABLED,
+    });
   }
 
   private createVpc(config: Config): Vpc {

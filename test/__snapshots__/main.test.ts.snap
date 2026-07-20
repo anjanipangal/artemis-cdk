@@ -3,6 +3,27 @@
 exports[`snapshot for Stack matches previous state 1`] = `
 {
   "Resources": {
+    "ClusterEB0386A7": {
+      "Properties": {
+        "ClusterSettings": [
+          {
+            "Name": "containerInsights",
+            "Value": "disabled",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::ECS::Cluster",
+    },
     "Vpc8378EB38": {
       "Properties": {
         "CidrBlock": "10.1.0.0/16",
