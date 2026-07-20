@@ -1,13 +1,21 @@
 import type { Construct } from "constructs";
 import type { StackProps } from "aws-cdk-lib";
 import { Stack, Tags } from "aws-cdk-lib";
+import { Certificate, CertificateValidation } from "aws-cdk-lib/aws-certificatemanager";
 import { Vpc, SubnetType, IpAddresses } from "aws-cdk-lib/aws-ec2";
 import { Cluster, ContainerInsights } from "aws-cdk-lib/aws-ecs";
-import { ApplicationLoadBalancer, NetworkLoadBalancer } from "aws-cdk-lib/aws-elasticloadbalancingv2";
+import {
+  ApplicationLoadBalancer,
+  ApplicationListener,
+  ApplicationProtocol,
+  ListenerAction,
+  NetworkLoadBalancer,
+} from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { HostedZone, type IHostedZone } from "aws-cdk-lib/aws-route53";
-import { Certificate, CertificateValidation } from "aws-cdk-lib/aws-certificatemanager";
 
 import type { Config } from "../config";
+import { LivekitServer } from "../constructs/livekit-server";
+import { Valkey } from "../constructs/valkey";
 import type { AssetsStack } from "./assets";
 
 export class InfraStack extends Stack {
@@ -17,8 +25,11 @@ export class InfraStack extends Stack {
   readonly nlb: NetworkLoadBalancer;
   readonly hostedZone: IHostedZone;
   readonly certificate: Certificate;
+  readonly albHttpsListener: ApplicationListener;
+  readonly valkey: Valkey;
+  readonly livekitServer: LivekitServer;
 
-  constructor(scope: Construct, id: string, config: Config, assetsStack: AssetsStack, props?: StackProps) {
+  constructor(scope: Construct, id: string, config: Config, _assetsStack: AssetsStack, props?: StackProps) {
     super(scope, id, { ...props, env: config.env });
 
     Tags.of(this).add("Project", "Artemis");
@@ -30,6 +41,29 @@ export class InfraStack extends Stack {
     this.nlb = this.createNlb();
     this.hostedZone = this.importHostedZone(config);
     this.certificate = this.createCertificate(config);
+    this.albHttpsListener = this.createAlbHttpsListener();
+    this.valkey = new Valkey(this, "Valkey", { config, vpc: this.vpc });
+    this.livekitServer = new LivekitServer(this, "LivekitServer", {
+      config,
+      vpc: this.vpc,
+      cluster: this.cluster,
+      albHttpsListener: this.albHttpsListener,
+      hostedZone: this.hostedZone,
+      alb: this.alb,
+      valkey: this.valkey,
+    });
+  }
+
+  private createAlbHttpsListener(): ApplicationListener {
+    return this.alb.addListener("HttpsListener", {
+      port: 443,
+      protocol: ApplicationProtocol.HTTPS,
+      certificates: [this.certificate],
+      defaultAction: ListenerAction.fixedResponse(404, {
+        contentType: "text/plain",
+        messageBody: "Not Found",
+      }),
+    });
   }
 
   private createCertificate(config: Config): Certificate {
