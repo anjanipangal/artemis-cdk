@@ -81,6 +81,33 @@ exports[`snapshot for Stack matches previous state 1`] = `
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
+    "Certificate4E7ABB08": {
+      "Properties": {
+        "DomainName": "*.dev.example.com",
+        "DomainValidationOptions": [
+          {
+            "DomainName": "*.dev.example.com",
+            "HostedZoneId": "DUMMY",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Name",
+            "Value": "MyTestStack/Certificate",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "ValidationMethod": "DNS",
+      },
+      "Type": "AWS::CertificateManager::Certificate",
+    },
     "ClusterEB0386A7": {
       "Properties": {
         "ClusterSettings": [
