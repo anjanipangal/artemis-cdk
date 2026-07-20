@@ -25,6 +25,7 @@ export class InfraStack extends Stack {
       subnetConfiguration: [
         { name: "public", subnetType: SubnetType.PUBLIC, cidrMask: 20 },
         { name: "private", subnetType: SubnetType.PRIVATE_WITH_EGRESS, cidrMask: 20 },
+        { name: "isolated", subnetType: SubnetType.PRIVATE_ISOLATED, cidrMask: 20 },
       ],
     });
   }

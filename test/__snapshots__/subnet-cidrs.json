@@ -1,1 +1,11 @@
-{}
+{
+  "VpcpublicSubnet1Subnet2BB74ED7": "10.0.0.0/20",
+  "VpcpublicSubnet2SubnetE34B022A": "10.0.16.0/20",
+  "VpcpublicSubnet3SubnetDFEF064A": "10.0.32.0/20",
+  "VpcprivateSubnet1SubnetCEAD3716": "10.0.48.0/20",
+  "VpcprivateSubnet2Subnet2DE7549C": "10.0.64.0/20",
+  "VpcprivateSubnet3SubnetA5AC68D9": "10.0.80.0/20",
+  "VpcisolatedSubnet1SubnetE62B1B9B": "10.0.96.0/20",
+  "VpcisolatedSubnet2Subnet39217055": "10.0.112.0/20",
+  "VpcisolatedSubnet3Subnet44F2537D": "10.0.128.0/20"
+}
