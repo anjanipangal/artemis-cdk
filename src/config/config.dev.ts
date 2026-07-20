@@ -6,4 +6,5 @@ export const devConfig: Config = {
     account: AwsAccount.Development,
     region: "us-east-1",
   },
+  vpcCidr: "10.0.0.0/16",
 };

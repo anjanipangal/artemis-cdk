@@ -9,6 +9,7 @@ type Env = {
 
 export type Config = {
   env: Env;
+  vpcCidr: string;
 };
 
 export type PipelineConfig = {
