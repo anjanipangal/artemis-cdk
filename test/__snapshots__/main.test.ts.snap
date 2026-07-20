@@ -3,6 +3,84 @@
 exports[`snapshot for Stack matches previous state 1`] = `
 {
   "Resources": {
+    "Alb16C2F182": {
+      "DependsOn": [
+        "VpcpublicSubnet1DefaultRouteB88F9E93",
+        "VpcpublicSubnet1RouteTableAssociation4E83B6E4",
+        "VpcpublicSubnet2DefaultRoute732F0BEB",
+        "VpcpublicSubnet2RouteTableAssociationCCE257FF",
+        "VpcpublicSubnet3DefaultRouteA3904BF0",
+        "VpcpublicSubnet3RouteTableAssociation61C43F88",
+      ],
+      "Properties": {
+        "LoadBalancerAttributes": [
+          {
+            "Key": "deletion_protection.enabled",
+            "Value": "false",
+          },
+        ],
+        "Scheme": "internet-facing",
+        "SecurityGroups": [
+          {
+            "Fn::GetAtt": [
+              "AlbSecurityGroup580F65A6",
+              "GroupId",
+            ],
+          },
+        ],
+        "Subnets": [
+          {
+            "Ref": "VpcpublicSubnet1Subnet2BB74ED7",
+          },
+          {
+            "Ref": "VpcpublicSubnet2SubnetE34B022A",
+          },
+          {
+            "Ref": "VpcpublicSubnet3SubnetDFEF064A",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "Type": "application",
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+    },
+    "AlbSecurityGroup580F65A6": {
+      "Properties": {
+        "GroupDescription": "Automatically created Security Group for ELB MyTestStackAlbA27FC7C7",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "255.255.255.255/32",
+            "Description": "Disallow all traffic",
+            "FromPort": 252,
+            "IpProtocol": "icmp",
+            "ToPort": 86,
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "VpcId": {
+          "Ref": "Vpc8378EB38",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
     "ClusterEB0386A7": {
       "Properties": {
         "ClusterSettings": [
@@ -23,6 +101,52 @@ exports[`snapshot for Stack matches previous state 1`] = `
         ],
       },
       "Type": "AWS::ECS::Cluster",
+    },
+    "NlbBCDB97FE": {
+      "DependsOn": [
+        "VpcpublicSubnet1DefaultRouteB88F9E93",
+        "VpcpublicSubnet1RouteTableAssociation4E83B6E4",
+        "VpcpublicSubnet2DefaultRoute732F0BEB",
+        "VpcpublicSubnet2RouteTableAssociationCCE257FF",
+        "VpcpublicSubnet3DefaultRouteA3904BF0",
+        "VpcpublicSubnet3RouteTableAssociation61C43F88",
+      ],
+      "Properties": {
+        "LoadBalancerAttributes": [
+          {
+            "Key": "deletion_protection.enabled",
+            "Value": "false",
+          },
+          {
+            "Key": "load_balancing.cross_zone.enabled",
+            "Value": "false",
+          },
+        ],
+        "Scheme": "internet-facing",
+        "Subnets": [
+          {
+            "Ref": "VpcpublicSubnet1Subnet2BB74ED7",
+          },
+          {
+            "Ref": "VpcpublicSubnet2SubnetE34B022A",
+          },
+          {
+            "Ref": "VpcpublicSubnet3SubnetDFEF064A",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "Type": "network",
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
     },
     "Vpc8378EB38": {
       "Properties": {

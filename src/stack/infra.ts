@@ -3,6 +3,7 @@ import type { StackProps } from "aws-cdk-lib";
 import { Stack, Tags } from "aws-cdk-lib";
 import { Vpc, SubnetType, IpAddresses } from "aws-cdk-lib/aws-ec2";
 import { Cluster, ContainerInsights } from "aws-cdk-lib/aws-ecs";
+import { ApplicationLoadBalancer, NetworkLoadBalancer } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 
 import type { Config } from "../config";
 import type { AssetsStack } from "./assets";
@@ -10,6 +11,8 @@ import type { AssetsStack } from "./assets";
 export class InfraStack extends Stack {
   readonly vpc: Vpc;
   readonly cluster: Cluster;
+  readonly alb: ApplicationLoadBalancer;
+  readonly nlb: NetworkLoadBalancer;
 
   constructor(scope: Construct, id: string, config: Config, assetsStack: AssetsStack, props?: StackProps) {
     super(scope, id, { ...props, env: config.env });
@@ -19,6 +22,25 @@ export class InfraStack extends Stack {
 
     this.vpc = this.createVpc(config);
     this.cluster = this.createCluster();
+    this.alb = this.createAlb();
+    this.nlb = this.createNlb();
+  }
+
+  private createAlb(): ApplicationLoadBalancer {
+    return new ApplicationLoadBalancer(this, "Alb", {
+      vpc: this.vpc,
+      internetFacing: true,
+      vpcSubnets: { subnetType: SubnetType.PUBLIC },
+    });
+  }
+
+  private createNlb(): NetworkLoadBalancer {
+    return new NetworkLoadBalancer(this, "Nlb", {
+      vpc: this.vpc,
+      internetFacing: true,
+      vpcSubnets: { subnetType: SubnetType.PUBLIC },
+      crossZoneEnabled: false,
+    });
   }
 
   private createCluster(): Cluster {
