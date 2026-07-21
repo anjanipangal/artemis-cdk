@@ -43,6 +43,17 @@ export type LivekitSipConfig = {
   twilio: TwilioConfig;
 };
 
+export type LivekitAgentsConfig = {
+  cpu: number;
+  memory: number;
+  desiredCount: number;
+  imageTag: string;
+  logRetentionDays: RetentionDays;
+  bedrockRegion: string;
+  bedrockModelIds: string[];
+  agentName: string;
+};
+
 export type Config = {
   env: Env;
   environmentName: string;
@@ -51,6 +62,7 @@ export type Config = {
   valkey: ValKeyConfig;
   livekit: LivekitConfig;
   livekitSip: LivekitSipConfig;
+  livekitAgents: LivekitAgentsConfig;
 };
 
 export type PipelineConfig = {

@@ -21,7 +21,17 @@ export const devConfig: Config = {
     desiredCount: 1,
     image: "livekit/livekit-server:v1.12",
     listenerRulePriority: 10,
-    logRetentionDays: RetentionDays.ONE_MONTH,
+    logRetentionDays: RetentionDays.SIX_MONTHS,
+  },
+  livekitAgents: {
+    cpu: 1024,
+    memory: 2048,
+    desiredCount: 1,
+    imageTag: "latest",
+    logRetentionDays: RetentionDays.SIX_MONTHS,
+    bedrockRegion: "us-east-1",
+    bedrockModelIds: ["amazon.nova-2-sonic-v1:0"],
+    agentName: "artemis-agent",
   },
   livekitSip: {
     subdomain: "sip",
@@ -29,7 +39,7 @@ export const devConfig: Config = {
     memory: 2048,
     desiredCount: 1,
     image: "livekit/sip:latest",
-    logRetentionDays: RetentionDays.ONE_MONTH,
+    logRetentionDays: RetentionDays.SIX_MONTHS,
     twilio: {
       signalingCidrs: [
         "54.172.60.0/30", // North Virginia

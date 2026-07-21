@@ -14,6 +14,7 @@ import {
 import { HostedZone, type IHostedZone } from "aws-cdk-lib/aws-route53";
 
 import type { Config } from "../config";
+import { LivekitAgents } from "../constructs/livekit-agents";
 import { LivekitServer } from "../constructs/livekit-server";
 import { LivekitSip } from "../constructs/livekit-sip";
 import { Valkey } from "../constructs/valkey";
@@ -30,8 +31,9 @@ export class InfraStack extends Stack {
   readonly valkey: Valkey;
   readonly livekitServer: LivekitServer;
   readonly livekitSip: LivekitSip;
+  readonly livekitAgents: LivekitAgents;
 
-  constructor(scope: Construct, id: string, config: Config, _assetsStack: AssetsStack, props?: StackProps) {
+  constructor(scope: Construct, id: string, config: Config, assetsStack: AssetsStack, props?: StackProps) {
     super(scope, id, { ...props, env: config.env });
 
     Tags.of(this).add("Project", "Artemis");
@@ -61,6 +63,13 @@ export class InfraStack extends Stack {
       nlb: this.nlb,
       hostedZone: this.hostedZone,
       valkey: this.valkey,
+      livekitServer: this.livekitServer,
+    });
+    this.livekitAgents = new LivekitAgents(this, "LivekitAgents", {
+      config,
+      vpc: this.vpc,
+      cluster: this.cluster,
+      repository: assetsStack.repository,
       livekitServer: this.livekitServer,
     });
   }

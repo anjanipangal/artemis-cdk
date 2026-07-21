@@ -177,6 +177,410 @@ exports[`snapshot for Stack matches previous state 1`] = `
       },
       "Type": "AWS::ECS::Cluster",
     },
+    "LivekitAgentsLivekitAgentsService70E912B0": {
+      "DependsOn": [
+        "LivekitAgentsLivekitAgentsTaskDefinitionTaskRoleDefaultPolicy29B7ECC8",
+        "LivekitAgentsLivekitAgentsTaskDefinitionTaskRoleF0FD00F9",
+      ],
+      "Properties": {
+        "Cluster": {
+          "Ref": "ClusterEB0386A7",
+        },
+        "DeploymentConfiguration": {
+          "Alarms": {
+            "AlarmNames": [],
+            "Enable": false,
+            "Rollback": false,
+          },
+          "DeploymentCircuitBreaker": {
+            "Enable": true,
+            "Rollback": true,
+          },
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 50,
+        },
+        "DeploymentController": {
+          "Type": "ECS",
+        },
+        "DesiredCount": 1,
+        "EnableECSManagedTags": false,
+        "HealthCheckGracePeriodSeconds": 60,
+        "LaunchType": "FARGATE",
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "DISABLED",
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
+                  "LivekitAgentsLivekitAgentsServiceSecurityGroupE0870D3C",
+                  "GroupId",
+                ],
+              },
+            ],
+            "Subnets": [
+              {
+                "Ref": "VpcprivateSubnet1SubnetCEAD3716",
+              },
+              {
+                "Ref": "VpcprivateSubnet2Subnet2DE7549C",
+              },
+              {
+                "Ref": "VpcprivateSubnet3SubnetA5AC68D9",
+              },
+            ],
+          },
+        },
+        "ServiceName": "artemis-livekit-agents",
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "TaskDefinition": {
+          "Ref": "LivekitAgentsLivekitAgentsTaskDefinitionB3B5C878",
+        },
+      },
+      "Type": "AWS::ECS::Service",
+    },
+    "LivekitAgentsLivekitAgentsServiceSecurityGroupE0870D3C": {
+      "DependsOn": [
+        "LivekitAgentsLivekitAgentsTaskDefinitionTaskRoleDefaultPolicy29B7ECC8",
+        "LivekitAgentsLivekitAgentsTaskDefinitionTaskRoleF0FD00F9",
+      ],
+      "Properties": {
+        "GroupDescription": "MyTestStack/LivekitAgents/LivekitAgentsService/SecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "VpcId": {
+          "Ref": "Vpc8378EB38",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "LivekitAgentsLivekitAgentsTaskDefinitionB3B5C878": {
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Environment": [
+              {
+                "Name": "LIVEKIT_URL",
+                "Value": "wss://livekit.dev.example.com",
+              },
+              {
+                "Name": "LIVEKIT_SECRET_NAME",
+                "Value": {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "-",
+                        {
+                          "Fn::Select": [
+                            6,
+                            {
+                              "Fn::Split": [
+                                ":",
+                                {
+                                  "Ref": "LivekitServerLivekitServerSecretBB774CEF",
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              },
+              {
+                "Name": "AWS_BEDROCK_REGION",
+                "Value": "us-east-1",
+              },
+              {
+                "Name": "LIVEKIT_AGENT_NAME",
+                "Value": "artemis-agent",
+              },
+            ],
+            "Essential": true,
+            "HealthCheck": {
+              "Command": [
+                "CMD-SHELL",
+                "curl -f http://localhost:8081/ || exit 1",
+              ],
+              "Interval": 30,
+              "Retries": 3,
+              "StartPeriod": 60,
+              "Timeout": 5,
+            },
+            "Image": Any<Object>,
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "LivekitAgentsLivekitAgentsTaskDefinitionLivekitAgentsLogGroupC1E2B109",
+                },
+                "awslogs-region": "us-west-1",
+                "awslogs-stream-prefix": "livekit-agents",
+              },
+            },
+            "Name": "livekit-agents",
+            "PortMappings": [
+              {
+                "ContainerPort": 8081,
+                "Protocol": "tcp",
+              },
+            ],
+            "Secrets": [
+              {
+                "Name": "LIVEKIT_API_KEY",
+                "ValueFrom": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Ref": "LivekitServerLivekitServerSecretBB774CEF",
+                      },
+                      ":api_key::",
+                    ],
+                  ],
+                },
+              },
+              {
+                "Name": "LIVEKIT_API_SECRET",
+                "ValueFrom": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Ref": "LivekitServerLivekitServerSecretBB774CEF",
+                      },
+                      ":api_secret::",
+                    ],
+                  ],
+                },
+              },
+            ],
+            "StopTimeout": 120,
+          },
+        ],
+        "Cpu": "1024",
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
+            "LivekitAgentsLivekitAgentsTaskDefinitionExecutionRoleFEA48FC6",
+            "Arn",
+          ],
+        },
+        "Family": "artemis-livekit-agents",
+        "Memory": "2048",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": [
+          "FARGATE",
+        ],
+        "RuntimePlatform": {
+          "CpuArchitecture": "ARM64",
+          "OperatingSystemFamily": "LINUX",
+        },
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
+            "LivekitAgentsLivekitAgentsTaskDefinitionTaskRoleF0FD00F9",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ECS::TaskDefinition",
+    },
+    "LivekitAgentsLivekitAgentsTaskDefinitionExecutionRoleDefaultPolicy217E2735": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::ImportValue": "MyTestAssetsStack:ExportsOutputFnGetAttRepository22E53BBDArn3AD4E30B",
+              },
+            },
+            {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "LivekitAgentsLivekitAgentsTaskDefinitionLivekitAgentsLogGroupC1E2B109",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "LivekitServerLivekitServerSecretBB774CEF",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LivekitAgentsLivekitAgentsTaskDefinitionExecutionRoleDefaultPolicy217E2735",
+        "Roles": [
+          {
+            "Ref": "LivekitAgentsLivekitAgentsTaskDefinitionExecutionRoleFEA48FC6",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LivekitAgentsLivekitAgentsTaskDefinitionExecutionRoleFEA48FC6": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LivekitAgentsLivekitAgentsTaskDefinitionLivekitAgentsLogGroupC1E2B109": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "RetentionInDays": 180,
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "LivekitAgentsLivekitAgentsTaskDefinitionTaskRoleDefaultPolicy29B7ECC8": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "LivekitServerLivekitServerSecretBB774CEF",
+              },
+            },
+            {
+              "Action": [
+                "bedrock:InvokeModel",
+                "bedrock:InvokeModelWithResponseStream",
+                "bedrock:InvokeModelWithBidirectionalStream",
+              ],
+              "Effect": "Allow",
+              "Resource": "arn:aws:bedrock:us-east-1::foundation-model/amazon.nova-2-sonic-v1:0",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LivekitAgentsLivekitAgentsTaskDefinitionTaskRoleDefaultPolicy29B7ECC8",
+        "Roles": [
+          {
+            "Ref": "LivekitAgentsLivekitAgentsTaskDefinitionTaskRoleF0FD00F9",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LivekitAgentsLivekitAgentsTaskDefinitionTaskRoleF0FD00F9": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
     "LivekitServerLivekitServerDnsRecord2A13A154": {
       "Properties": {
         "AliasTarget": {
@@ -681,7 +1085,7 @@ redis:
     "LivekitServerLivekitServerTaskDefinitionLivekitServerLogGroup0F118A2E": {
       "DeletionPolicy": "Retain",
       "Properties": {
-        "RetentionInDays": 30,
+        "RetentionInDays": 180,
         "Tags": [
           {
             "Key": "GitRepository",
@@ -1325,7 +1729,7 @@ redis:
     "LivekitSipLivekitSipTaskDefinitionLivekitSipLogGroupB6D38408": {
       "DeletionPolicy": "Retain",
       "Properties": {
-        "RetentionInDays": 30,
+        "RetentionInDays": 180,
         "Tags": [
           {
             "Key": "GitRepository",
