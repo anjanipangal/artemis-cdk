@@ -23,4 +23,27 @@ export const devConfig: Config = {
     listenerRulePriority: 10,
     logRetentionDays: RetentionDays.ONE_MONTH,
   },
+  livekitSip: {
+    subdomain: "sip",
+    cpu: 1024,
+    memory: 2048,
+    desiredCount: 1,
+    image: "livekit/sip:latest",
+    logRetentionDays: RetentionDays.ONE_MONTH,
+    twilio: {
+      signalingCidrs: [
+        "54.172.60.0/30", // North Virginia
+        "54.244.51.0/30", // Oregon
+        "54.171.127.192/30", // Ireland
+        "35.156.191.128/30", // Frankfurt
+        "54.65.63.192/30", // Tokyo
+        "54.169.127.128/30", // Singapore
+        "54.252.254.64/30", // Sydney
+        "177.71.206.192/30", // São Paulo
+      ],
+      mediaCidrs: [
+        "168.86.128.0/18", // Twilio global media/SRTP
+      ],
+    },
+  },
 };

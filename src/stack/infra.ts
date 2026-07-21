@@ -15,6 +15,7 @@ import { HostedZone, type IHostedZone } from "aws-cdk-lib/aws-route53";
 
 import type { Config } from "../config";
 import { LivekitServer } from "../constructs/livekit-server";
+import { LivekitSip } from "../constructs/livekit-sip";
 import { Valkey } from "../constructs/valkey";
 import type { AssetsStack } from "./assets";
 
@@ -28,6 +29,7 @@ export class InfraStack extends Stack {
   readonly albHttpsListener: ApplicationListener;
   readonly valkey: Valkey;
   readonly livekitServer: LivekitServer;
+  readonly livekitSip: LivekitSip;
 
   constructor(scope: Construct, id: string, config: Config, _assetsStack: AssetsStack, props?: StackProps) {
     super(scope, id, { ...props, env: config.env });
@@ -51,6 +53,15 @@ export class InfraStack extends Stack {
       hostedZone: this.hostedZone,
       alb: this.alb,
       valkey: this.valkey,
+    });
+    this.livekitSip = new LivekitSip(this, "LivekitSip", {
+      config,
+      vpc: this.vpc,
+      cluster: this.cluster,
+      nlb: this.nlb,
+      hostedZone: this.hostedZone,
+      valkey: this.valkey,
+      livekitServer: this.livekitServer,
     });
   }
 

@@ -759,6 +759,702 @@ redis:
       },
       "Type": "AWS::IAM::Policy",
     },
+    "LivekitSipLivekitSipDnsRecord34ABBDDD": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::Join": [
+              "",
+              [
+                "dualstack.",
+                {
+                  "Fn::GetAtt": [
+                    "NlbBCDB97FE",
+                    "DNSName",
+                  ],
+                },
+              ],
+            ],
+          },
+          "HostedZoneId": {
+            "Fn::GetAtt": [
+              "NlbBCDB97FE",
+              "CanonicalHostedZoneID",
+            ],
+          },
+        },
+        "HostedZoneId": "DUMMY",
+        "Name": "sip.dev.example.com.",
+        "Type": "A",
+      },
+      "Type": "AWS::Route53::RecordSet",
+    },
+    "LivekitSipLivekitSipService9A8D63F9": {
+      "DependsOn": [
+        "LivekitSipLivekitSipTaskDefinitionTaskRoleDefaultPolicyB071173D",
+        "LivekitSipLivekitSipTaskDefinitionTaskRoleC063011A",
+        "NlbLivekitSipTcpUdpListener741ABF6E",
+        "NlbLivekitSipTlsListenerAEC8CCB5",
+      ],
+      "Properties": {
+        "Cluster": {
+          "Ref": "ClusterEB0386A7",
+        },
+        "DeploymentConfiguration": {
+          "Alarms": {
+            "AlarmNames": [],
+            "Enable": false,
+            "Rollback": false,
+          },
+          "DeploymentCircuitBreaker": {
+            "Enable": true,
+            "Rollback": true,
+          },
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 50,
+        },
+        "DeploymentController": {
+          "Type": "ECS",
+        },
+        "DesiredCount": 1,
+        "EnableECSManagedTags": false,
+        "HealthCheckGracePeriodSeconds": 60,
+        "LaunchType": "FARGATE",
+        "LoadBalancers": [
+          {
+            "ContainerName": "livekit-sip",
+            "ContainerPort": 5060,
+            "TargetGroupArn": {
+              "Ref": "LivekitSipLivekitSipTg5060163E3675",
+            },
+          },
+          {
+            "ContainerName": "livekit-sip",
+            "ContainerPort": 5061,
+            "TargetGroupArn": {
+              "Ref": "LivekitSipLivekitSipTg5061341FA1F3",
+            },
+          },
+        ],
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "ENABLED",
+            "SecurityGroups": [
+              {
+                "Fn::GetAtt": [
+                  "LivekitSipLivekitSipServiceSecurityGroup1060688D",
+                  "GroupId",
+                ],
+              },
+            ],
+            "Subnets": [
+              {
+                "Ref": "VpcpublicSubnet1Subnet2BB74ED7",
+              },
+              {
+                "Ref": "VpcpublicSubnet2SubnetE34B022A",
+              },
+              {
+                "Ref": "VpcpublicSubnet3SubnetDFEF064A",
+              },
+            ],
+          },
+        },
+        "ServiceName": "artemis-livekit-sip",
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "TaskDefinition": {
+          "Ref": "LivekitSipLivekitSipTaskDefinitionB0791AA6",
+        },
+      },
+      "Type": "AWS::ECS::Service",
+    },
+    "LivekitSipLivekitSipServiceSecurityGroup1060688D": {
+      "DependsOn": [
+        "LivekitSipLivekitSipTaskDefinitionTaskRoleDefaultPolicyB071173D",
+        "LivekitSipLivekitSipTaskDefinitionTaskRoleC063011A",
+      ],
+      "Properties": {
+        "GroupDescription": "MyTestStack/LivekitSip/LivekitSipService/SecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": "54.172.60.0/30",
+            "Description": "SIP TCP from 54.172.60.0/30",
+            "FromPort": 5060,
+            "IpProtocol": "tcp",
+            "ToPort": 5060,
+          },
+          {
+            "CidrIp": "54.172.60.0/30",
+            "Description": "SIP UDP from 54.172.60.0/30",
+            "FromPort": 5060,
+            "IpProtocol": "udp",
+            "ToPort": 5060,
+          },
+          {
+            "CidrIp": "54.172.60.0/30",
+            "Description": "SIP TLS from 54.172.60.0/30",
+            "FromPort": 5061,
+            "IpProtocol": "tcp",
+            "ToPort": 5061,
+          },
+          {
+            "CidrIp": "54.244.51.0/30",
+            "Description": "SIP TCP from 54.244.51.0/30",
+            "FromPort": 5060,
+            "IpProtocol": "tcp",
+            "ToPort": 5060,
+          },
+          {
+            "CidrIp": "54.244.51.0/30",
+            "Description": "SIP UDP from 54.244.51.0/30",
+            "FromPort": 5060,
+            "IpProtocol": "udp",
+            "ToPort": 5060,
+          },
+          {
+            "CidrIp": "54.244.51.0/30",
+            "Description": "SIP TLS from 54.244.51.0/30",
+            "FromPort": 5061,
+            "IpProtocol": "tcp",
+            "ToPort": 5061,
+          },
+          {
+            "CidrIp": "54.171.127.192/30",
+            "Description": "SIP TCP from 54.171.127.192/30",
+            "FromPort": 5060,
+            "IpProtocol": "tcp",
+            "ToPort": 5060,
+          },
+          {
+            "CidrIp": "54.171.127.192/30",
+            "Description": "SIP UDP from 54.171.127.192/30",
+            "FromPort": 5060,
+            "IpProtocol": "udp",
+            "ToPort": 5060,
+          },
+          {
+            "CidrIp": "54.171.127.192/30",
+            "Description": "SIP TLS from 54.171.127.192/30",
+            "FromPort": 5061,
+            "IpProtocol": "tcp",
+            "ToPort": 5061,
+          },
+          {
+            "CidrIp": "35.156.191.128/30",
+            "Description": "SIP TCP from 35.156.191.128/30",
+            "FromPort": 5060,
+            "IpProtocol": "tcp",
+            "ToPort": 5060,
+          },
+          {
+            "CidrIp": "35.156.191.128/30",
+            "Description": "SIP UDP from 35.156.191.128/30",
+            "FromPort": 5060,
+            "IpProtocol": "udp",
+            "ToPort": 5060,
+          },
+          {
+            "CidrIp": "35.156.191.128/30",
+            "Description": "SIP TLS from 35.156.191.128/30",
+            "FromPort": 5061,
+            "IpProtocol": "tcp",
+            "ToPort": 5061,
+          },
+          {
+            "CidrIp": "54.65.63.192/30",
+            "Description": "SIP TCP from 54.65.63.192/30",
+            "FromPort": 5060,
+            "IpProtocol": "tcp",
+            "ToPort": 5060,
+          },
+          {
+            "CidrIp": "54.65.63.192/30",
+            "Description": "SIP UDP from 54.65.63.192/30",
+            "FromPort": 5060,
+            "IpProtocol": "udp",
+            "ToPort": 5060,
+          },
+          {
+            "CidrIp": "54.65.63.192/30",
+            "Description": "SIP TLS from 54.65.63.192/30",
+            "FromPort": 5061,
+            "IpProtocol": "tcp",
+            "ToPort": 5061,
+          },
+          {
+            "CidrIp": "54.169.127.128/30",
+            "Description": "SIP TCP from 54.169.127.128/30",
+            "FromPort": 5060,
+            "IpProtocol": "tcp",
+            "ToPort": 5060,
+          },
+          {
+            "CidrIp": "54.169.127.128/30",
+            "Description": "SIP UDP from 54.169.127.128/30",
+            "FromPort": 5060,
+            "IpProtocol": "udp",
+            "ToPort": 5060,
+          },
+          {
+            "CidrIp": "54.169.127.128/30",
+            "Description": "SIP TLS from 54.169.127.128/30",
+            "FromPort": 5061,
+            "IpProtocol": "tcp",
+            "ToPort": 5061,
+          },
+          {
+            "CidrIp": "54.252.254.64/30",
+            "Description": "SIP TCP from 54.252.254.64/30",
+            "FromPort": 5060,
+            "IpProtocol": "tcp",
+            "ToPort": 5060,
+          },
+          {
+            "CidrIp": "54.252.254.64/30",
+            "Description": "SIP UDP from 54.252.254.64/30",
+            "FromPort": 5060,
+            "IpProtocol": "udp",
+            "ToPort": 5060,
+          },
+          {
+            "CidrIp": "54.252.254.64/30",
+            "Description": "SIP TLS from 54.252.254.64/30",
+            "FromPort": 5061,
+            "IpProtocol": "tcp",
+            "ToPort": 5061,
+          },
+          {
+            "CidrIp": "177.71.206.192/30",
+            "Description": "SIP TCP from 177.71.206.192/30",
+            "FromPort": 5060,
+            "IpProtocol": "tcp",
+            "ToPort": 5060,
+          },
+          {
+            "CidrIp": "177.71.206.192/30",
+            "Description": "SIP UDP from 177.71.206.192/30",
+            "FromPort": 5060,
+            "IpProtocol": "udp",
+            "ToPort": 5060,
+          },
+          {
+            "CidrIp": "177.71.206.192/30",
+            "Description": "SIP TLS from 177.71.206.192/30",
+            "FromPort": 5061,
+            "IpProtocol": "tcp",
+            "ToPort": 5061,
+          },
+          {
+            "CidrIp": "168.86.128.0/18",
+            "Description": "RTP UDP from 168.86.128.0/18",
+            "FromPort": 10000,
+            "IpProtocol": "udp",
+            "ToPort": 60000,
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "VpcId": {
+          "Ref": "Vpc8378EB38",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "LivekitSipLivekitSipTaskDefinitionB0791AA6": {
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Command": [
+              "livekit-sip --config-body "$SIP_CONFIG_BODY$(printf '\\n  password: %s' "$VALKEY_AUTH_TOKEN")"",
+            ],
+            "EntryPoint": [
+              "/bin/sh",
+              "-c",
+            ],
+            "Environment": [
+              {
+                "Name": "SIP_CONFIG_BODY",
+                "Value": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "sip_port: 5060
+tls_port: 5061
+rtp_port: 10000-60000
+use_external_ip: true
+health_port: 8080
+ws_url: wss://livekit.dev.example.com
+redis:
+  address: ",
+                      {
+                        "Fn::GetAtt": [
+                          "ValkeyValkeyReplicationGroup51EE0E56",
+                          "PrimaryEndPoint.Address",
+                        ],
+                      },
+                      ":",
+                      {
+                        "Fn::GetAtt": [
+                          "ValkeyValkeyReplicationGroup51EE0E56",
+                          "PrimaryEndPoint.Port",
+                        ],
+                      },
+                      "
+  use_tls: true",
+                    ],
+                  ],
+                },
+              },
+            ],
+            "Essential": true,
+            "HealthCheck": {
+              "Command": [
+                "CMD-SHELL",
+                "bash -c 'echo > /dev/tcp/localhost/8080' || exit 1",
+              ],
+              "Interval": 30,
+              "Retries": 3,
+              "StartPeriod": 60,
+              "Timeout": 5,
+            },
+            "Image": Any<Object>,
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "LivekitSipLivekitSipTaskDefinitionLivekitSipLogGroupB6D38408",
+                },
+                "awslogs-region": "us-west-1",
+                "awslogs-stream-prefix": "livekit-sip",
+              },
+            },
+            "Name": "livekit-sip",
+            "PortMappings": [
+              {
+                "ContainerPort": 5060,
+                "Protocol": "tcp",
+              },
+              {
+                "ContainerPort": 5061,
+                "Protocol": "tcp",
+              },
+              {
+                "ContainerPortRange": "10000-60000",
+                "Protocol": "udp",
+              },
+              {
+                "ContainerPort": 8080,
+                "Protocol": "tcp",
+              },
+            ],
+            "Secrets": [
+              {
+                "Name": "LIVEKIT_API_KEY",
+                "ValueFrom": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Ref": "LivekitServerLivekitServerSecretBB774CEF",
+                      },
+                      ":api_key::",
+                    ],
+                  ],
+                },
+              },
+              {
+                "Name": "LIVEKIT_API_SECRET",
+                "ValueFrom": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Ref": "LivekitServerLivekitServerSecretBB774CEF",
+                      },
+                      ":api_secret::",
+                    ],
+                  ],
+                },
+              },
+              {
+                "Name": "VALKEY_AUTH_TOKEN",
+                "ValueFrom": {
+                  "Ref": "ValkeyValkeyAuthSecret5D61F4E5",
+                },
+              },
+            ],
+            "StopTimeout": 120,
+          },
+        ],
+        "Cpu": "1024",
+        "ExecutionRoleArn": {
+          "Fn::GetAtt": [
+            "LivekitSipLivekitSipTaskDefinitionExecutionRoleCEC5F7BD",
+            "Arn",
+          ],
+        },
+        "Family": "artemis-livekit-sip",
+        "Memory": "2048",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": [
+          "FARGATE",
+        ],
+        "RuntimePlatform": {
+          "CpuArchitecture": "ARM64",
+          "OperatingSystemFamily": "LINUX",
+        },
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "TaskRoleArn": {
+          "Fn::GetAtt": [
+            "LivekitSipLivekitSipTaskDefinitionTaskRoleC063011A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ECS::TaskDefinition",
+    },
+    "LivekitSipLivekitSipTaskDefinitionExecutionRoleCEC5F7BD": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LivekitSipLivekitSipTaskDefinitionExecutionRoleDefaultPolicyE4C4A53F": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "LivekitSipLivekitSipTaskDefinitionLivekitSipLogGroupB6D38408",
+                  "Arn",
+                ],
+              },
+            },
+            {
+              "Action": [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "LivekitServerLivekitServerSecretBB774CEF",
+              },
+            },
+            {
+              "Action": [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "ValkeyValkeyAuthSecret5D61F4E5",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LivekitSipLivekitSipTaskDefinitionExecutionRoleDefaultPolicyE4C4A53F",
+        "Roles": [
+          {
+            "Ref": "LivekitSipLivekitSipTaskDefinitionExecutionRoleCEC5F7BD",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LivekitSipLivekitSipTaskDefinitionLivekitSipLogGroupB6D38408": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "RetentionInDays": 30,
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "LivekitSipLivekitSipTaskDefinitionTaskRoleC063011A": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LivekitSipLivekitSipTaskDefinitionTaskRoleDefaultPolicyB071173D": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "LivekitServerLivekitServerSecretBB774CEF",
+              },
+            },
+            {
+              "Action": [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "ValkeyValkeyAuthSecret5D61F4E5",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LivekitSipLivekitSipTaskDefinitionTaskRoleDefaultPolicyB071173D",
+        "Roles": [
+          {
+            "Ref": "LivekitSipLivekitSipTaskDefinitionTaskRoleC063011A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LivekitSipLivekitSipTg5060163E3675": {
+      "Properties": {
+        "HealthCheckIntervalSeconds": 30,
+        "HealthCheckPort": "8080",
+        "HealthCheckProtocol": "TCP",
+        "HealthyThresholdCount": 2,
+        "Port": 5060,
+        "Protocol": "TCP_UDP",
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "TargetType": "ip",
+        "UnhealthyThresholdCount": 3,
+        "VpcId": {
+          "Ref": "Vpc8378EB38",
+        },
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+    },
+    "LivekitSipLivekitSipTg5061341FA1F3": {
+      "Properties": {
+        "HealthCheckIntervalSeconds": 30,
+        "HealthCheckPort": "8080",
+        "HealthCheckProtocol": "TCP",
+        "HealthyThresholdCount": 2,
+        "Port": 5061,
+        "Protocol": "TCP",
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "TBD",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "TargetType": "ip",
+        "UnhealthyThresholdCount": 3,
+        "VpcId": {
+          "Ref": "Vpc8378EB38",
+        },
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+    },
     "NlbBCDB97FE": {
       "DependsOn": [
         "VpcpublicSubnet1DefaultRouteB88F9E93",
@@ -804,6 +1500,42 @@ redis:
         "Type": "network",
       },
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+    },
+    "NlbLivekitSipTcpUdpListener741ABF6E": {
+      "Properties": {
+        "DefaultActions": [
+          {
+            "TargetGroupArn": {
+              "Ref": "LivekitSipLivekitSipTg5060163E3675",
+            },
+            "Type": "forward",
+          },
+        ],
+        "LoadBalancerArn": {
+          "Ref": "NlbBCDB97FE",
+        },
+        "Port": 5060,
+        "Protocol": "TCP_UDP",
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+    },
+    "NlbLivekitSipTlsListenerAEC8CCB5": {
+      "Properties": {
+        "DefaultActions": [
+          {
+            "TargetGroupArn": {
+              "Ref": "LivekitSipLivekitSipTg5061341FA1F3",
+            },
+            "Type": "forward",
+          },
+        ],
+        "LoadBalancerArn": {
+          "Ref": "NlbBCDB97FE",
+        },
+        "Port": 5061,
+        "Protocol": "TCP",
+      },
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
     },
     "ValkeyValkeyAuthSecret5D61F4E5": {
       "DeletionPolicy": "Delete",
@@ -916,6 +1648,27 @@ redis:
         "SourceSecurityGroupId": {
           "Fn::GetAtt": [
             "LivekitServerLivekitServerServiceSecurityGroup8C2CAD09",
+            "GroupId",
+          ],
+        },
+        "ToPort": 6379,
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "ValkeyValkeySecurityGroupfromMyTestStackLivekitSipLivekitSipServiceSecurityGroupA0C27F6363790BEE2A1A": {
+      "Properties": {
+        "Description": "LiveKit SIP to ValKey",
+        "FromPort": 6379,
+        "GroupId": {
+          "Fn::GetAtt": [
+            "ValkeyValkeySecurityGroup8EFF2370",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "LivekitSipLivekitSipServiceSecurityGroup1060688D",
             "GroupId",
           ],
         },

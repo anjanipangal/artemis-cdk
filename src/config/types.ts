@@ -27,6 +27,22 @@ export type LivekitConfig = {
   logRetentionDays: RetentionDays;
 };
 
+export type TwilioConfig = {
+  // Reference: https://www.twilio.com/docs/sip-trunking#ip-addresses
+  signalingCidrs: string[];
+  mediaCidrs: string[];
+};
+
+export type LivekitSipConfig = {
+  subdomain: string;
+  cpu: number;
+  memory: number;
+  desiredCount: number;
+  image: string;
+  logRetentionDays: RetentionDays;
+  twilio: TwilioConfig;
+};
+
 export type Config = {
   env: Env;
   environmentName: string;
@@ -34,6 +50,7 @@ export type Config = {
   domain: string;
   valkey: ValKeyConfig;
   livekit: LivekitConfig;
+  livekitSip: LivekitSipConfig;
 };
 
 export type PipelineConfig = {
