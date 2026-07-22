@@ -107,7 +107,7 @@ redis:
       image: ContainerImage.fromRegistry(livekit.image),
       stopTimeout: Duration.seconds(120),
       entryPoint: ["/bin/sh", "-c"],
-      command: ['livekit-server --keys "$LIVEKIT_API_KEY: $LIVEKIT_API_SECRET" --redis-password "$VALKEY_AUTH_TOKEN"'],
+      command: ['/livekit-server --keys "$LIVEKIT_API_KEY: $LIVEKIT_API_SECRET" --redis-password "$VALKEY_AUTH_TOKEN"'],
       environment: {
         LIVEKIT_CONFIG: livekitConfig,
       },
