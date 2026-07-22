@@ -2,5 +2,9 @@
   "availability-zones:account=438641188435:region=us-west-1": [
     "us-west-1a",
     "us-west-1c"
-  ]
+  ],
+  "hosted-zone:account=438641188435:domainName=dev.getartemishealth.com:region=us-west-1": {
+    "Id": "/hostedzone/Z09481491A3SOHK57DNM3",
+    "Name": "dev.getartemishealth.com."
+  }
 }

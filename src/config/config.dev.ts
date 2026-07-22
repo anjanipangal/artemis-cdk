@@ -8,7 +8,7 @@ export const devConfig: Config = {
   },
   environmentName: "dev",
   vpcCidr: "10.1.0.0/16",
-  domain: "dev.example.com",
+  domain: "dev.getartemishealth.com",
   valkey: {
     engineVersion: "9.0",
     nodeType: "cache.t4g.micro",
