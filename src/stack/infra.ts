@@ -21,6 +21,7 @@ import { Valkey } from "../constructs/valkey";
 import type { AssetsStack } from "./assets";
 
 export class InfraStack extends Stack {
+  readonly config: Config;
   readonly vpc: Vpc;
   readonly cluster: Cluster;
   readonly alb: ApplicationLoadBalancer;
@@ -35,9 +36,10 @@ export class InfraStack extends Stack {
 
   constructor(scope: Construct, id: string, config: Config, assetsStack: AssetsStack, props?: StackProps) {
     super(scope, id, { ...props, env: config.env });
+    this.config = config;
 
     Tags.of(this).add("Project", "Artemis");
-    Tags.of(this).add("GitRepository", "TBD"); //TODO Fix this once GitHub Repository gets created
+    Tags.of(this).add("GitRepository", "https://github.com/anjanipangal/artemis-cdk");
 
     this.vpc = this.createVpc(config);
     this.cluster = this.createCluster();
@@ -102,6 +104,7 @@ export class InfraStack extends Stack {
   private createAlb(): ApplicationLoadBalancer {
     return new ApplicationLoadBalancer(this, "Alb", {
       vpc: this.vpc,
+      loadBalancerName: `${this.config.environmentName}-public-alb-shared`,
       internetFacing: true,
       vpcSubnets: { subnetType: SubnetType.PUBLIC },
     });
@@ -110,6 +113,7 @@ export class InfraStack extends Stack {
   private createNlb(): NetworkLoadBalancer {
     return new NetworkLoadBalancer(this, "Nlb", {
       vpc: this.vpc,
+      loadBalancerName: `${this.config.environmentName}-public-nlb-shared`,
       internetFacing: true,
       vpcSubnets: { subnetType: SubnetType.PUBLIC },
       crossZoneEnabled: false,
@@ -119,6 +123,7 @@ export class InfraStack extends Stack {
   private createCluster(): Cluster {
     return new Cluster(this, "Cluster", {
       vpc: this.vpc,
+      clusterName: `${this.config.environmentName}-cluster`,
       containerInsightsV2: ContainerInsights.DISABLED,
     });
   }

@@ -27,7 +27,7 @@ export const devConfig: Config = {
     cpu: 1024,
     memory: 2048,
     desiredCount: 1,
-    imageTag: "latest",
+    imageTag: "dev",
     logRetentionDays: RetentionDays.SIX_MONTHS,
     bedrockRegion: "us-east-1",
     bedrockModelIds: ["amazon.nova-2-sonic-v1:0"],
