@@ -46,7 +46,7 @@ export class LivekitSip extends Construct {
     const { config, vpc, cluster, nlb, hostedZone, valkey, livekitServer } = props;
 
     this.taskDefinition = this.createTaskDefinition(config, valkey, livekitServer);
-    this.service = this.createService(config, cluster);
+    this.service = this.createService(config, cluster, nlb);
     valkey.connections.allowDefaultPortFrom(this.service, "LiveKit SIP to ValKey");
     this.createNlbTargets(vpc, nlb);
     this.createDnsRecord(config, hostedZone, nlb);
@@ -118,7 +118,7 @@ redis:
     return taskDef;
   }
 
-  private createService(config: Config, cluster: ICluster): FargateService {
+  private createService(config: Config, cluster: ICluster, nlb: NetworkLoadBalancer): FargateService {
     const service = new FargateService(this, "LivekitSipService", {
       serviceName: "artemis-livekit-sip",
       cluster,
@@ -132,6 +132,14 @@ redis:
 
     const { twilio } = config.livekitSip;
 
+    // NLB SG: allow Twilio to reach the NLB on listener ports
+    for (const cidr of twilio.signalingCidrs) {
+      nlb.connections.allowFrom(Peer.ipv4(cidr), Port.tcp(5060), `SIP TCP from ${cidr}`);
+      nlb.connections.allowFrom(Peer.ipv4(cidr), Port.udp(5060), `SIP UDP from ${cidr}`);
+      nlb.connections.allowFrom(Peer.ipv4(cidr), Port.tcp(5061), `SIP TLS from ${cidr}`);
+    }
+
+    // Target SG: allow Twilio (client IP preserved for IP targets) on SIP/RTP ports
     for (const cidr of twilio.signalingCidrs) {
       service.connections.allowFrom(Peer.ipv4(cidr), Port.tcp(5060), `SIP TCP from ${cidr}`);
       service.connections.allowFrom(Peer.ipv4(cidr), Port.udp(5060), `SIP UDP from ${cidr}`);
@@ -141,6 +149,9 @@ redis:
     for (const cidr of twilio.mediaCidrs) {
       service.connections.allowFrom(Peer.ipv4(cidr), Port.udpRange(10000, 60000), `RTP UDP from ${cidr}`);
     }
+
+    // Allow NLB to reach targets on health check port
+    service.connections.allowFrom(nlb, Port.tcp(8080), "NLB health check");
 
     return service;
   }
