@@ -19,6 +19,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
             "Value": "false",
           },
         ],
+        "Name": "dev-public-alb-shared",
         "Scheme": "internet-facing",
         "SecurityGroups": [
           {
@@ -42,7 +43,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -95,7 +96,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -131,17 +132,17 @@ exports[`snapshot for Stack matches previous state 1`] = `
     },
     "Certificate4E7ABB08": {
       "Properties": {
-        "DomainName": "*.dev.example.com",
+        "DomainName": "*.dev.getartemishealth.com",
         "DomainValidationOptions": [
           {
-            "DomainName": "*.dev.example.com",
+            "DomainName": "*.dev.getartemishealth.com",
             "HostedZoneId": "DUMMY",
           },
         ],
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -158,6 +159,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
     },
     "ClusterEB0386A7": {
       "Properties": {
+        "ClusterName": "dev-cluster",
         "ClusterSettings": [
           {
             "Name": "containerInsights",
@@ -167,7 +169,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -234,7 +236,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -264,7 +266,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -284,7 +286,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
             "Environment": [
               {
                 "Name": "LIVEKIT_URL",
-                "Value": "wss://livekit.dev.example.com",
+                "Value": "wss://livekit.dev.getartemishealth.com",
               },
               {
                 "Name": "LIVEKIT_SECRET_NAME",
@@ -403,7 +405,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -491,7 +493,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -508,7 +510,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -571,7 +573,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -606,7 +608,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
           },
         },
         "HostedZoneId": "DUMMY",
-        "Name": "livekit.dev.example.com.",
+        "Name": "livekit.dev.getartemishealth.com.",
         "Type": "A",
       },
       "Type": "AWS::Route53::RecordSet",
@@ -626,7 +628,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
             "Field": "host-header",
             "HostHeaderConfig": {
               "Values": [
-                "livekit.dev.example.com",
+                "livekit.dev.getartemishealth.com",
               ],
             },
           },
@@ -652,7 +654,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -730,7 +732,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -776,7 +778,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -827,7 +829,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -853,7 +855,7 @@ exports[`snapshot for Stack matches previous state 1`] = `
         "ContainerDefinitions": [
           {
             "Command": [
-              "livekit-server --keys "$LIVEKIT_API_KEY: $LIVEKIT_API_SECRET" --redis-password "$VALKEY_AUTH_TOKEN"",
+              "/livekit-server --keys "$LIVEKIT_API_KEY: $LIVEKIT_API_SECRET" --redis-password "$VALKEY_AUTH_TOKEN"",
             ],
             "EntryPoint": [
               "/bin/sh",
@@ -990,7 +992,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -1023,7 +1025,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -1089,7 +1091,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -1117,7 +1119,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -1188,7 +1190,7 @@ redis:
           },
         },
         "HostedZoneId": "DUMMY",
-        "Name": "sip.dev.example.com.",
+        "Name": "sip.dev.getartemishealth.com.",
         "Type": "A",
       },
       "Type": "AWS::Route53::RecordSet",
@@ -1268,7 +1270,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -1475,7 +1477,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -1511,7 +1513,7 @@ tls_port: 5061
 rtp_port: 10000-60000
 use_external_ip: true
 health_port: 8080
-ws_url: wss://livekit.dev.example.com
+ws_url: wss://livekit.dev.getartemishealth.com
 redis:
   address: ",
                       {
@@ -1634,7 +1636,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -1667,7 +1669,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -1733,7 +1735,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -1761,7 +1763,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -1818,7 +1820,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -1844,7 +1846,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -1879,6 +1881,7 @@ redis:
             "Value": "false",
           },
         ],
+        "Name": "dev-public-nlb-shared",
         "Scheme": "internet-facing",
         "Subnets": [
           {
@@ -1894,7 +1897,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -1953,7 +1956,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -2001,7 +2004,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -2025,7 +2028,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -2098,7 +2101,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Project",
@@ -2117,7 +2120,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2136,7 +2139,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2177,7 +2180,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2210,7 +2213,7 @@ redis:
           },
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2232,7 +2235,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2276,7 +2279,7 @@ redis:
           },
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2298,7 +2301,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2342,7 +2345,7 @@ redis:
           },
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2376,7 +2379,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2420,7 +2423,7 @@ redis:
           },
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2454,7 +2457,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2498,7 +2501,7 @@ redis:
           },
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2532,7 +2535,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2576,7 +2579,7 @@ redis:
           },
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2614,7 +2617,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2646,7 +2649,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2665,7 +2668,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2709,7 +2712,7 @@ redis:
           },
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2757,7 +2760,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2790,7 +2793,7 @@ redis:
           },
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2827,7 +2830,7 @@ redis:
         "Tags": [
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
@@ -2871,7 +2874,7 @@ redis:
           },
           {
             "Key": "GitRepository",
-            "Value": "TBD",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
           },
           {
             "Key": "Name",
