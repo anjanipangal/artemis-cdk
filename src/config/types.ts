@@ -54,6 +54,18 @@ export type LivekitAgentsConfig = {
   agentName: string;
 };
 
+export type OutboundTrunkConfig = {
+  name: string;
+  address: string;
+  outboundCallerIds: string[];
+  configVersion: number; // Bump to force re-creation of the outbound trunk (When Secret value changes)
+};
+
+export type SipConfigConfig = {
+  outboundTrunks: OutboundTrunkConfig[];
+  logRetentionDays: RetentionDays;
+};
+
 export type Config = {
   env: Env;
   environmentName: string;
@@ -63,6 +75,7 @@ export type Config = {
   livekit: LivekitConfig;
   livekitSip: LivekitSipConfig;
   livekitAgents: LivekitAgentsConfig;
+  sipConfig?: SipConfigConfig;
 };
 
 export type PipelineConfig = {

@@ -17,6 +17,7 @@ import type { Config } from "../config";
 import { LivekitAgents } from "../constructs/livekit-agents";
 import { LivekitServer } from "../constructs/livekit-server";
 import { LivekitSip } from "../constructs/livekit-sip";
+import { SipConfig } from "../constructs/sip-config";
 import { Valkey } from "../constructs/valkey";
 import type { AssetsStack } from "./assets";
 
@@ -33,6 +34,7 @@ export class InfraStack extends Stack {
   readonly livekitServer: LivekitServer;
   readonly livekitSip: LivekitSip;
   readonly livekitAgents: LivekitAgents;
+  readonly sipConfig: SipConfig;
 
   constructor(scope: Construct, id: string, config: Config, assetsStack: AssetsStack, props?: StackProps) {
     super(scope, id, { ...props, env: config.env });
@@ -72,6 +74,10 @@ export class InfraStack extends Stack {
       vpc: this.vpc,
       cluster: this.cluster,
       repository: assetsStack.repository,
+      livekitServer: this.livekitServer,
+    });
+    this.sipConfig = new SipConfig(this, "SipConfig", {
+      config,
       livekitServer: this.livekitServer,
     });
   }

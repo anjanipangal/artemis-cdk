@@ -56,4 +56,15 @@ export const devConfig: Config = {
       ],
     },
   },
+  sipConfig: {
+    logRetentionDays: RetentionDays.SIX_MONTHS,
+    outboundTrunks: [
+      {
+        name: "dev-artemis",
+        address: "artemis-dev.pstn.twilio.com", // Twilio Termination SIP URI
+        outboundCallerIds: ["+19257226561"], // Phone number shown to patients when the agent calls them
+        configVersion: 1,
+      },
+    ],
+  },
 };

@@ -1944,6 +1944,356 @@ redis:
       },
       "Type": "AWS::ElasticLoadBalancingV2::Listener",
     },
+    "SipConfigSipConfigFunctionB815D90D": {
+      "DependsOn": [
+        "SipConfigSipConfigFunctionServiceRoleDefaultPolicy36B7E145",
+        "SipConfigSipConfigFunctionServiceRole6283B9ED",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": Any<Object>,
+        "Description": "Manages LiveKit SIP outbound trunks via the LiveKit API.",
+        "Environment": {
+          "Variables": {
+            "LIVEKIT_SECRET_ARN": {
+              "Ref": "LivekitServerLivekitServerSecretBB774CEF",
+            },
+            "LIVEKIT_URL": "https://livekit.dev.getartemishealth.com",
+          },
+        },
+        "FunctionName": "dev-sip-config",
+        "LoggingConfig": {
+          "LogGroup": {
+            "Ref": "SipConfigSipConfigFunctionLogsA0B6ACE1",
+          },
+        },
+        "MemorySize": 512,
+        "PackageType": "Image",
+        "Role": {
+          "Fn::GetAtt": [
+            "SipConfigSipConfigFunctionServiceRole6283B9ED",
+            "Arn",
+          ],
+        },
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "Timeout": 60,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "SipConfigSipConfigFunctionLogsA0B6ACE1": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "RetentionInDays": 180,
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "SipConfigSipConfigFunctionServiceRole6283B9ED": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "SipConfigSipConfigFunctionServiceRoleDefaultPolicy36B7E145": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "LivekitServerLivekitServerSecretBB774CEF",
+              },
+            },
+            {
+              "Action": [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Ref": "SipConfigTwilioCredentials3F5C672A",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "SipConfigSipConfigFunctionServiceRoleDefaultPolicy36B7E145",
+        "Roles": [
+          {
+            "Ref": "SipConfigSipConfigFunctionServiceRole6283B9ED",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "SipConfigSipConfigProviderLogs4D1749A5": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "RetentionInDays": 180,
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "SipConfigSipConfigProviderframeworkonEvent03C6B99F": {
+      "DependsOn": [
+        "SipConfigSipConfigProviderframeworkonEventServiceRoleDefaultPolicy4C1FF4E6",
+        "SipConfigSipConfigProviderframeworkonEventServiceRole13765F3A",
+      ],
+      "Properties": {
+        "Code": Any<Object>,
+        "Description": "AWS CDK resource provider framework - onEvent (MyTestStack/SipConfig/SipConfigProvider)",
+        "Environment": {
+          "Variables": {
+            "USER_ON_EVENT_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "SipConfigSipConfigFunctionB815D90D",
+                "Arn",
+              ],
+            },
+          },
+        },
+        "Handler": "framework.onEvent",
+        "LoggingConfig": {
+          "ApplicationLogLevel": "FATAL",
+          "LogFormat": "JSON",
+          "LogGroup": {
+            "Ref": "SipConfigSipConfigProviderLogs4D1749A5",
+          },
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "SipConfigSipConfigProviderframeworkonEventServiceRole13765F3A",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "SipConfigSipConfigProviderframeworkonEventServiceRole13765F3A": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "SipConfigSipConfigProviderframeworkonEventServiceRoleDefaultPolicy4C1FF4E6": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "SipConfigSipConfigFunctionB815D90D",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "SipConfigSipConfigFunctionB815D90D",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:GetFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "SipConfigSipConfigFunctionB815D90D",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "SipConfigSipConfigProviderframeworkonEventServiceRoleDefaultPolicy4C1FF4E6",
+        "Roles": [
+          {
+            "Ref": "SipConfigSipConfigProviderframeworkonEventServiceRole13765F3A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "SipConfigSipOutboundTrunk0E51D1E12": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "LivekitServerLivekitServerServiceSecurityGroupfromMyTestStackAlbSecurityGroup4C92DBCC7880BA47D671",
+        "LivekitServerLivekitServerServiceSecurityGroup8C2CAD09",
+        "LivekitServerLivekitServerService442AF1EF",
+      ],
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "SipConfigSipConfigProviderframeworkonEvent03C6B99F",
+            "Arn",
+          ],
+        },
+        "address": "artemis-dev.pstn.twilio.com",
+        "config_version": "1",
+        "numbers": "["+19257226561"]",
+        "trunk_name": "dev-artemis",
+        "twilio_credentials_secret_arn": {
+          "Ref": "SipConfigTwilioCredentials3F5C672A",
+        },
+      },
+      "Type": "AWS::CloudFormation::CustomResource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "SipConfigTwilioCredentials3F5C672A": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Description": "Twilio SIP trunk credentials (username and password)",
+        "GenerateSecretString": {
+          "ExcludePunctuation": true,
+          "GenerateStringKey": "password",
+          "PasswordLength": 32,
+          "SecretStringTemplate": "{"username":"REPLACE_ME"}",
+        },
+        "Name": "dev/artemis/twilio",
+        "Tags": [
+          {
+            "Key": "GitRepository",
+            "Value": "https://github.com/anjanipangal/artemis-cdk",
+          },
+          {
+            "Key": "Project",
+            "Value": "Artemis",
+          },
+        ],
+      },
+      "Type": "AWS::SecretsManager::Secret",
+      "UpdateReplacePolicy": "Delete",
+    },
     "ValkeyValkeyAuthSecret5D61F4E5": {
       "DeletionPolicy": "Delete",
       "Properties": {
